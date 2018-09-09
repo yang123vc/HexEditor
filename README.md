@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ilyayunkin/HexEditor.svg)](https://travis-ci.org/ilyayunkin/HexEditor)
+
 # HexEditor
 Hex viewer
 
