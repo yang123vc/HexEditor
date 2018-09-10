@@ -17,6 +17,7 @@ after_build:
   - rm release/*.o
   - rm release/*.cpp
 
+#Note: artifacts path should be from root directory
 artifacts:
   - path: src/release
     type: zip
