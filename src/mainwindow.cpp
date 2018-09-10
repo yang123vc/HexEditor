@@ -57,6 +57,10 @@ void MainWindow::read()
             statusBar()->showMessage("File is opened", 10000);
         }
 
+        if(dataView->model()){
+            dataView->model()->deleteLater();
+        }
+
         dataView->setModel(model);
     }else{
         statusBar()->showMessage("File opening error", 10000);
