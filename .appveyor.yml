@@ -18,5 +18,5 @@ after_build:
   - rm release/*.cpp
 
 artifacts:
-  - path: release
+  - path: src/release
     type: zip
