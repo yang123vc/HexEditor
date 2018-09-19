@@ -1,6 +1,7 @@
 #include "ByteArrayItemDelegate.h"
 #include <QApplication>
 #include <QLineEdit>
+#include <QRegExpValidator>
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -64,6 +65,9 @@ QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
 {
     QLineEdit *editor = new QLineEdit(parent);
     editor->setFrame(false);
+
+    QRegExp regexp("[0-f]+(\\s[0-f]+)*$");
+    editor->setValidator(new QRegExpValidator(regexp, editor));
 
     return editor;
 }
