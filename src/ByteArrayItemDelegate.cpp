@@ -1,4 +1,7 @@
 #include "ByteArrayItemDelegate.h"
+
+#include <assert.h>
+
 #include <QApplication>
 #include <QLineEdit>
 #include <QRegExpValidator>
@@ -66,7 +69,7 @@ QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
     QLineEdit *editor = new QLineEdit(parent);
     editor->setFrame(false);
 
-    QRegExp regexp("[0-f]+(\\s[0-f]+)*$");
+    QRegExp regexp("[0-f]{2}(\\s[0-f]{2})*$");
     editor->setValidator(new QRegExpValidator(regexp, editor));
 
     return editor;
@@ -85,10 +88,20 @@ void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
                                    const QModelIndex &index) const
 {
     QLineEdit *const lineEdit = static_cast<QLineEdit*>(editor);
+
+    const QVariant originalValue = model->data(index, Qt::DisplayRole);
+
+    assert(originalValue.type() == QVariant::ByteArray);
+
+    const QByteArray originalArray = originalValue.toByteArray();
+    const int originalArraySize = originalArray.size();
+
     const QString hexString = lineEdit->text().remove(' ');
     const QByteArray array = QByteArray::fromHex(hexString.toLatin1());
 
-    model->setData(index, array, Qt::EditRole);
+    if(array.size() == originalArraySize){
+        model->setData(index, array, Qt::EditRole);
+    }
 }
 
 void ByteArrayItemDelegate::updateEditorGeometry(QWidget *editor,
