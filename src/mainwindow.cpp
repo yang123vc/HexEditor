@@ -23,8 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
         {
             QMenu * fileMenu = menuBar()->addMenu("File");
             {
-                QAction *readAction = fileMenu->addAction("Read");
-                connect(readAction, SIGNAL(triggered(bool)), SLOT(read()));
+                QAction *OpenAction = fileMenu->addAction("Open");
+                connect(OpenAction, SIGNAL(triggered(bool)), SLOT(read()));
             }
         }
         {
