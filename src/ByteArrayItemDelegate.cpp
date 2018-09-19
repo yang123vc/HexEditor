@@ -32,7 +32,7 @@ QString ByteArrayItemDelegate::getAsciiRepresentation(const QByteArray &array) c
     str.resize(array.size());
 
     for(int i = 0; i < array.size(); i++){
-        bool printAsIs = QChar::isLetterOrNumber(array[i]) ||
+        const bool printAsIs = QChar::isLetterOrNumber(array[i]) ||
                 QChar::isPunct(array[i]);
 
         if(!printAsIs){
@@ -66,10 +66,10 @@ QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
                                        const QStyleOptionViewItem &/* option */,
                                        const QModelIndex &/* index */) const
 {
-    QLineEdit *editor = new QLineEdit(parent);
+    QLineEdit *const editor = new QLineEdit(parent);
     editor->setFrame(false);
 
-    QRegExp regexp("[0-f]{2}(\\s[0-f]{2})*$");
+    const QRegExp regexp("[0-f]{2}(\\s[0-f]{2})*$");
     editor->setValidator(new QRegExpValidator(regexp, editor));
 
     return editor;
@@ -80,15 +80,13 @@ void ByteArrayItemDelegate::setEditorData(QWidget *editor,
 {
     const QByteArray array = index.data().toByteArray();
 
-    QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
+    QLineEdit *const lineEdit = static_cast<QLineEdit*>(editor);
     lineEdit->setText(getHexRepresentation(array));
 }
 
 void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
-    QLineEdit *const lineEdit = static_cast<QLineEdit*>(editor);
-
     const QVariant originalValue = model->data(index, Qt::DisplayRole);
 
     assert(originalValue.type() == QVariant::ByteArray);
@@ -96,6 +94,7 @@ void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
     const QByteArray originalArray = originalValue.toByteArray();
     const int originalArraySize = originalArray.size();
 
+    const QLineEdit *const lineEdit = static_cast<QLineEdit*>(editor);
     const QString hexString = lineEdit->text().remove(' ');
     const QByteArray array = QByteArray::fromHex(hexString.toLatin1());
 
