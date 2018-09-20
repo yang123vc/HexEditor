@@ -3,6 +3,9 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/5i7bfvotc0pnqekr?svg=true)](https://ci.appveyor.com/project/ilyayunkin/hexeditor)
 
 # HexEditor
-Hex viewer
+* Firstly select monospaced font in Settings->Fonts.
+* Open your file by File->Open.
+* Edit it. One byte should be represented by two chars in range [0-a].
+* Save changes by File->Save.
 
 ![](https://github.com/ilyayunkin/HexEditor/blob/master/img/screen1.jpg)
