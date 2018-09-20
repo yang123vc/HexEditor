@@ -12,6 +12,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     QListView * dataView;
+    QAction *saveAction;
     ByteArrayItemDelegate delegate;
 
 public:
@@ -21,6 +22,8 @@ public:
 public slots:
     void read();
     void selectFont();
+    void cacheChanged();
+    void cacheSaved();
 };
 
 #endif // MAINWINDOW_H

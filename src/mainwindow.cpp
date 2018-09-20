@@ -23,8 +23,11 @@ MainWindow::MainWindow(QWidget *parent)
         {
             QMenu * fileMenu = menuBar()->addMenu("File");
             {
-                QAction *OpenAction = fileMenu->addAction("Open");
-                connect(OpenAction, SIGNAL(triggered(bool)), SLOT(read()));
+                QAction *openAction = fileMenu->addAction("Open");
+                connect(openAction, SIGNAL(triggered(bool)), SLOT(read()));
+            }
+            {
+                saveAction = fileMenu->addAction("Save");
             }
         }
         {
@@ -54,14 +57,25 @@ void MainWindow::read()
         ByteArrayListModel *model = new ByteArrayListModel(this);
 
         if(model->open(fileName)){
-            statusBar()->showMessage("File is opened", 10000);
-        }
 
-        if(dataView->model()){
-            dataView->model()->deleteLater();
-        }
+            if(dataView->model()){
+                dataView->model()->deleteLater();
+            }
 
-        dataView->setModel(model);
+            dataView->setModel(model);
+
+            setWindowTitle(QApplication::applicationName() + " - " +
+                           model->getFilename());
+            statusBar()->showMessage(QString("File %1 is opened").arg(
+                                         model->getFilename()), 10000);
+
+            connect(model, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
+            connect(model, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
+            connect(saveAction, SIGNAL(triggered(bool)),
+                    model, SLOT(saveCacheToFile()));
+        }else{
+            model->deleteLater();
+        }
     }else{
         statusBar()->showMessage("File opening error", 10000);
     }
@@ -75,4 +89,14 @@ void MainWindow::selectFont()
     if(got){
         dataView->setFont(font);
     }
+}
+
+void MainWindow::cacheChanged()
+{
+    setWindowTitle(windowTitle() + "*");
+}
+
+void MainWindow::cacheSaved()
+{
+    setWindowTitle(windowTitle().remove("*"));
 }

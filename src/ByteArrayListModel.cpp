@@ -7,6 +7,29 @@ ByteArrayListModel::ByteArrayListModel(QObject *parent) :
 {
 }
 
+QString ByteArrayListModel::getFilename() const
+{
+    return file.fileName();
+}
+
+void ByteArrayListModel::saveCacheToFile()
+{
+    if(!editingCache.empty()){
+        for(QMap<qint64, QByteArray>::iterator it = editingCache.begin(); it != editingCache.end(); ++it) {
+            const QByteArray &array = *it;
+            const qint64 row = it.key();
+
+            file.seek(row * 16);
+            qint64 count = file.write(array);
+
+            assert(count == array.size());
+        }
+
+        editingCache.clear();
+        emit cacheSaved();
+    }
+}
+
 int ByteArrayListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -30,8 +53,15 @@ QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
             switch (role) {
             case Qt::DisplayRole:
             {
-                file.seek(row * 16);
-                ret = file.read(16);
+                QMap<qint64, QByteArray>::const_iterator it = editingCache.find(row);
+                bool foundInCache = it != editingCache.end();
+
+                if(foundInCache){
+                    ret = *it;
+                }else{
+                    file.seek(row * 16);
+                    ret = file.read(16);
+                }
             }
                 break;
             default:
@@ -56,14 +86,17 @@ bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value
             {
                 assert(value.type() == QVariant::ByteArray);
 
-                QByteArray array = value.toByteArray();
+                const QByteArray originalArray = data(index).toByteArray();
+                const QByteArray array = value.toByteArray();
 
                 assert(array.size() <= 16);
+                assert(array.size() == originalArray.size());
 
-                file.seek(row * 16);
-                qint64 count = file.write(array);
+                editingCache.insert(row, array);
 
-                assert(count == array.size());
+                if(originalArray != array){
+                    emit cacheChanged();
+                }
             }
                 break;
             default:
