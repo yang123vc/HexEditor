@@ -3,13 +3,18 @@
 #include <QVBoxLayout>
 #include <QStatusBar>
 #include <QMenuBar>
+
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QMessageBox>
 
 #include <QApplication>
 
+#include <QCloseEvent>
+
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+      model(nullptr)
 {
     setCentralWidget(new QWidget);
     QVBoxLayout *layout = new QVBoxLayout(centralWidget());
@@ -54,7 +59,7 @@ void MainWindow::read()
                                                     "Binary (*.bin);;"
                                                     "All (*.*)");
     if(!fileName.isEmpty()){
-        ByteArrayListModel *model = new ByteArrayListModel(this);
+        model = new ByteArrayListModel(this);
 
         if(model->open(fileName)){
 
@@ -75,6 +80,7 @@ void MainWindow::read()
                     model, SLOT(saveCacheToFile()));
         }else{
             model->deleteLater();
+            model = nullptr;
         }
     }else{
         statusBar()->showMessage("File opening error", 10000);
@@ -99,4 +105,19 @@ void MainWindow::cacheChanged()
 void MainWindow::cacheSaved()
 {
     setWindowTitle(windowTitle().remove("*"));
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if ((model != nullptr) && model->isEdited()) {
+        int button = QMessageBox::question(nullptr, "Close request",
+                              "There is unsaved changes.\r\nSure to close application?",
+                              QMessageBox::Ok,
+                              QMessageBox::Cancel);
+        if(button == QMessageBox::Ok){
+            event->accept();
+        }else {
+            event->ignore();
+        }
+    }
 }

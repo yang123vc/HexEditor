@@ -16,6 +16,7 @@ public:
     ByteArrayListModel(QObject *parent = nullptr);
     bool open(const QString filename);
     QString getFilename() const;
+    bool isEdited() const;
 
 public slots:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;

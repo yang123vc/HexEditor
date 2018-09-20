@@ -14,6 +14,9 @@ class MainWindow : public QMainWindow
     QListView * dataView;
     QAction *saveAction;
     ByteArrayItemDelegate delegate;
+    ByteArrayListModel *model;
+
+    void closeEvent(QCloseEvent *event);
 
 public:
     MainWindow(QWidget *parent = 0);

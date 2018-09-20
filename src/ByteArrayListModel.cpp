@@ -30,6 +30,11 @@ void ByteArrayListModel::saveCacheToFile()
     }
 }
 
+bool ByteArrayListModel::isEdited() const
+{
+    return !editingCache.empty();
+}
+
 int ByteArrayListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
