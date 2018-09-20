@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QListView>
+#include <QTableView>
 
 #include "ByteArrayListModel.h"
 #include "ByteArrayItemDelegate.h"
@@ -11,7 +11,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    QListView * dataView;
+    QTableView * dataView;
     QAction *saveAction;
     ByteArrayItemDelegate delegate;
     ByteArrayListModel *model;

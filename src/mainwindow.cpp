@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QStatusBar>
 #include <QMenuBar>
+#include <QHeaderView>
 
 #include <QFileDialog>
 #include <QFontDialog>
@@ -19,9 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(new QWidget);
     QVBoxLayout *layout = new QVBoxLayout(centralWidget());
 
-    dataView = new QListView;
+    dataView = new QTableView;
     layout->addWidget(dataView);
     dataView->setItemDelegate(&delegate);
+    dataView->horizontalHeader()->hide();
+    dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     setMenuBar(new QMenuBar);
     {

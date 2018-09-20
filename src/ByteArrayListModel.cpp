@@ -78,6 +78,27 @@ QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
     return ret;
 }
 
+QVariant ByteArrayListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    QVariant ret;
+    if(orientation == Qt::Vertical){
+        switch (role) {
+        case Qt::DisplayRole:
+        {
+            qint64 begin = section * 16;
+            qint64 end = section + 16 - 1;
+
+            ret = QString::number(begin, 16).rightJustified(4, '0') + " : " +
+                    QString::number(end, 16).rightJustified(4, '0');
+        }
+            break;
+        default:
+            break;
+        }
+    }
+    return ret;
+}
+
 bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     bool ret = false;
