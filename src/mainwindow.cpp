@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent)
             {
                 saveAction = fileMenu->addAction("Save");
             }
+            {
+                QAction *saveAsAction = fileMenu->addAction("Save as...");
+                connect(saveAsAction, SIGNAL(triggered(bool)), SLOT(saveAs()));
+            }
         }
         {
             QMenu * settingsMenu = menuBar()->addMenu("Settings");
@@ -73,21 +77,29 @@ void MainWindow::read()
 
             dataView->setModel(model);
 
-            setWindowTitle(QApplication::applicationName() + " - " +
-                           model->getFilename());
+            setWindowTitle(titleBase());
             statusBar()->showMessage(QString("File %1 is opened").arg(
                                          model->getFilename()), 10000);
 
             connect(model, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
             connect(model, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
             connect(saveAction, SIGNAL(triggered(bool)),
-                    model, SLOT(saveCacheToFile()));
+                    model, SLOT(save()));
         }else{
             model->deleteLater();
             model = nullptr;
         }
     }else{
         statusBar()->showMessage("File opening error", 10000);
+    }
+}
+
+void MainWindow::saveAs()
+{
+    const QString filename = QFileDialog::getSaveFileName();
+
+    if(!filename.isEmpty()){
+        model->saveAs(filename);
     }
 }
 
@@ -103,12 +115,12 @@ void MainWindow::selectFont()
 
 void MainWindow::cacheChanged()
 {
-    setWindowTitle(windowTitle() + "*");
+    setWindowTitle(titleBase() + "*");
 }
 
 void MainWindow::cacheSaved()
 {
-    setWindowTitle(windowTitle().remove("*"));
+    setWindowTitle(titleBase());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -124,4 +136,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
             event->ignore();
         }
     }
+}
+
+QString MainWindow::titleBase()
+{
+    QString str = QApplication::applicationName();
+
+    if(model != nullptr){
+        str+= QString(" - ") + model->getFilename();
+    }
+
+    return str;
 }

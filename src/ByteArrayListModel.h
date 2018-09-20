@@ -12,6 +12,8 @@ class ByteArrayListModel : public QAbstractListModel
 
     mutable QFile file;
     QMap<qint64, QByteArray> editingCache;
+    void writeCacheToFile(QFile &readWriteFile);
+    void writeRowToFile(QFile &file, qint64 row, const QByteArray &array);
 public:
     ByteArrayListModel(QObject *parent = nullptr);
     bool open(const QString filename);
@@ -25,7 +27,8 @@ public slots:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    void saveCacheToFile();
+    void save();
+    bool saveAs(const QString filename);
 
 signals:
     void cacheChanged();

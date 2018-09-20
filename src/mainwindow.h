@@ -18,12 +18,15 @@ class MainWindow : public QMainWindow
 
     void closeEvent(QCloseEvent *event);
 
+    QString titleBase();
+
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
     void read();
+    void saveAs();
     void selectFont();
     void cacheChanged();
     void cacheSaved();
