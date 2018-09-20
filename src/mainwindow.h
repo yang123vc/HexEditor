@@ -18,7 +18,7 @@ class MainWindow : public QMainWindow
 
     void closeEvent(QCloseEvent *event);
 
-    QString titleBase();
+    QString titleBase() const;
 
 public:
     MainWindow(QWidget *parent = 0);

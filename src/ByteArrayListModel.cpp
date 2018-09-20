@@ -12,9 +12,9 @@ QString ByteArrayListModel::getFilename() const
     return file.fileName();
 }
 
-void ByteArrayListModel::writeCacheToFile(QFile &readWriteFile)
+void ByteArrayListModel::writeCacheToFile(QFile &readWriteFile) const
 {
-    for(QMap<qint64, QByteArray>::iterator it = editingCache.begin(); it != editingCache.end(); ++it) {
+    for(QMap<qint64, QByteArray>::const_iterator it = editingCache.begin(); it != editingCache.end(); ++it) {
         const QByteArray &array = *it;
         const qint64 row = it.key();
 
@@ -22,7 +22,7 @@ void ByteArrayListModel::writeCacheToFile(QFile &readWriteFile)
     }
 }
 
-void ByteArrayListModel::writeRowToFile(QFile &file, qint64 row, const QByteArray &array)
+void ByteArrayListModel::writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const
 {
     file.seek(row * 16);
     qint64 count = file.write(array);

@@ -138,7 +138,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-QString MainWindow::titleBase()
+QString MainWindow::titleBase() const
 {
     QString str = QApplication::applicationName();
 
