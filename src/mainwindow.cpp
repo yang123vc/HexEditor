@@ -53,7 +53,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::read()
 {
-    QString fileName = QFileDialog::getOpenFileName(0, "Open file", "C:/",
+    QString fileName = QFileDialog::getOpenFileName(0, "Open file", QString(),
                                                     "Executable (*.exe);;"
                                                     "DLL (*.dll);;"
                                                     "Binary (*.bin);;"
