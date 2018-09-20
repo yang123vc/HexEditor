@@ -118,9 +118,8 @@ bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value
                 assert(array.size() <= 16);
                 assert(array.size() == originalArray.size());
 
-                editingCache.insert(row, array);
-
                 if(originalArray != array){
+                    editingCache.insert(row, array);
                     emit cacheChanged();
                 }
             }

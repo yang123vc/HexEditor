@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     setStatusBar(new QStatusBar);
+    setMinimumSize(800, 400);
 }
 
 MainWindow::~MainWindow()
