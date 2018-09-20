@@ -111,7 +111,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if ((model != nullptr) && model->isEdited()) {
         int button = QMessageBox::question(nullptr, "Close request",
-                              "There is unsaved changes.\r\nSure to close application?",
+                              "There are unsaved changes.\r\nSure to close the application?",
                               QMessageBox::Ok,
                               QMessageBox::Cancel);
         if(button == QMessageBox::Ok){
