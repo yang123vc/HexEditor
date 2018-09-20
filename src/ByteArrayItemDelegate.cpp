@@ -54,7 +54,7 @@ void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
     const QByteArray array = index.data().toByteArray();
 
-    const QString str = getHexRepresentation(array) +
+    const QString str = getHexRepresentation(array, true) +
             "    " + getAsciiRepresentation(array);
     opt.text = str;
 
@@ -69,7 +69,7 @@ QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
     QLineEdit *const editor = new QLineEdit(parent);
     editor->setFrame(false);
 
-    const QRegExp regexp("[0-f]{2}(\\s[0-f]{2})*$");
+    const QRegExp regexp("[0-f]{1,2}(\\s[0-f]{1,2})*$");
     editor->setValidator(new QRegExpValidator(regexp, editor));
 
     return editor;
@@ -95,11 +95,15 @@ void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
     const int originalArraySize = originalArray.size();
 
     const QLineEdit *const lineEdit = static_cast<QLineEdit*>(editor);
-    const QString hexString = lineEdit->text().remove(' ');
-    const QByteArray array = QByteArray::fromHex(hexString.toLatin1());
 
-    if(array.size() == originalArraySize){
-        model->setData(index, array, Qt::EditRole);
+    const QRegExp regexp("[0-f]{2}(\\s[0-f]{2})*$");
+    QString hexString = lineEdit->text();
+    if(regexp.exactMatch(hexString)){
+        const QByteArray array = QByteArray::fromHex(hexString.toLatin1());
+
+        if(array.size() == originalArraySize){
+            model->setData(index, array, Qt::EditRole);
+        }
     }
 }
 
