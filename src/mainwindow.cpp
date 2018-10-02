@@ -7,6 +7,7 @@
 
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QFont>
 #include <QMessageBox>
 
 #include <QApplication>
@@ -20,11 +21,16 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(new QWidget);
     QVBoxLayout *layout = new QVBoxLayout(centralWidget());
 
-    dataView = new QTableView;
-    layout->addWidget(dataView);
-    dataView->setItemDelegate(&delegate);
-    dataView->horizontalHeader()->hide();
-    dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    {
+        QFont f("Monospace");
+        f.setStyleHint(QFont::Monospace);
+        dataView = new QTableView;
+        layout->addWidget(dataView);
+        dataView->setItemDelegate(&delegate);
+        dataView->horizontalHeader()->hide();
+        dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        dataView->setFont(f);
+    }
 
     setMenuBar(new QMenuBar);
     {
