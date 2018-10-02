@@ -15,7 +15,7 @@ class ByteArrayListModel : public QAbstractListModel
     void writeCacheToFile(QFile &readWriteFile) const;
     void writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const;
 public:
-    ByteArrayListModel(QObject *parent = nullptr);
+    explicit ByteArrayListModel(QObject *parent = nullptr);
     bool open(const QString filename);
     QString getFilename() const;
     bool isEdited() const;
