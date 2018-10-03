@@ -3,6 +3,10 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/5i7bfvotc0pnqekr?svg=true)](https://ci.appveyor.com/project/ilyayunkin/hexeditor)
 
 # HexEditor
-Hex viewer
+Hex view
 
 ![](https://github.com/ilyayunkin/HexEditor/blob/master/img/screen1.jpg)
+
+Hex diff
+
+![](https://github.com/ilyayunkin/HexEditor/blob/master/img/screen2.jpg)

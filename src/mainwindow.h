@@ -5,6 +5,7 @@
 #include <QTableView>
 
 #include "ByteArrayListModel.h"
+#include "ByteArrayDiffModel.h"
 #include "ByteArrayItemDelegate.h"
 
 class MainWindow : public QMainWindow
@@ -14,7 +15,7 @@ class MainWindow : public QMainWindow
     QTableView * dataView;
     QAction *saveAction;
     ByteArrayItemDelegate delegate;
-    ByteArrayListModel *model;
+    AbstractByteArrayModel *model;
 
     void closeEvent(QCloseEvent *event);
 
@@ -26,6 +27,7 @@ public:
 
 public slots:
     void read();
+    void diff();
     void saveAs();
     void selectFont();
     void cacheChanged();

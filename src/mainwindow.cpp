@@ -41,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent)
                 connect(openAction, SIGNAL(triggered(bool)), SLOT(read()));
             }
             {
+                QAction *openAction = fileMenu->addAction("Diff");
+                connect(openAction, SIGNAL(triggered(bool)), SLOT(diff()));
+            }
+            {
                 saveAction = fileMenu->addAction("Save");
             }
             {
@@ -73,7 +77,8 @@ void MainWindow::read()
                                                     "Binary (*.bin);;"
                                                     "All (*.*)");
     if(!fileName.isEmpty()){
-        model = new ByteArrayListModel(this);
+        ByteArrayListModel *model = new ByteArrayListModel(this);
+        this->model = model;
 
         if(model->open(fileName)){
 
@@ -94,6 +99,54 @@ void MainWindow::read()
         }else{
             model->deleteLater();
             model = nullptr;
+        }
+    }else{
+        statusBar()->showMessage("File opening error", 10000);
+    }
+}
+
+void MainWindow::diff()
+{
+    QString fileName1 = QFileDialog::getOpenFileName(0, "Open FIRST file", QString(),
+                                                    "Executable (*.exe);;"
+                                                    "DLL (*.dll);;"
+                                                    "Binary (*.bin);;"
+                                                    "All (*.*)");
+    QString fileName2 = QFileDialog::getOpenFileName(0, "Open SECOND file", QString(),
+                                                    "Executable (*.exe);;"
+                                                    "DLL (*.dll);;"
+                                                    "Binary (*.bin);;"
+                                                    "All (*.*)");
+    if((!fileName1.isEmpty()) && (!fileName2.isEmpty())){
+
+        ByteArrayListModel *model1 = new ByteArrayListModel(this);
+        ByteArrayListModel *model2 = new ByteArrayListModel(this);
+        ByteArrayDiffModel *model = new ByteArrayDiffModel(model1, model2);
+        this->model = model;
+
+        if(model1->open(fileName1) &&
+                model2->open(fileName2) &&
+                (fileName1 != fileName2)){
+
+            if(dataView->model()){
+                dataView->model()->deleteLater();
+            }
+
+            dataView->setModel(model);
+
+            setWindowTitle(titleBase());
+            statusBar()->showMessage(
+                        QString("Files %1, %2 is opened").arg(
+                            model1->getFilename()).arg(
+                            model2->getFilename()), 10000);
+
+            connect(model, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
+            connect(model, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
+            connect(saveAction, SIGNAL(triggered(bool)),
+                    model, SLOT(save()));
+        }else{
+            model1->deleteLater();
+            model1 = nullptr;
         }
     }else{
         statusBar()->showMessage("File opening error", 10000);

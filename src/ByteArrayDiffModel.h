@@ -1,25 +1,23 @@
-#ifndef BYTEARRAYLISTMODEL_H
-#define BYTEARRAYLISTMODEL_H
+#ifndef BYTEARRAYDIFFMODEL_H
+#define BYTEARRAYDIFFMODEL_H
 
-#include <AbstractByteArrayModel.h>
-#include <QByteArray>
 #include <QMap>
 #include <QFile>
 
-class ByteArrayListModel : public AbstractByteArrayModel
+#include "AbstractByteArrayModel.h"
+#include "ByteArrayListModel.h"
+
+class ByteArrayDiffModel : public AbstractByteArrayModel
 {
     Q_OBJECT
 
-    mutable QFile file;
-    QMap<qint64, QByteArray> editingCache;
-    void writeCacheToFile(QFile &readWriteFile) const;
-    void writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const;
+    ByteArrayListModel *child1;
+    ByteArrayListModel *child2;
 public:
-    explicit ByteArrayListModel(QObject *parent = nullptr);
-    bool open(const QString filename);
+    ByteArrayDiffModel(ByteArrayListModel *child1,
+                       ByteArrayListModel *child2, QObject *parent = nullptr);
     QString getFilename() const;
     bool isEdited() const;
-
 public slots:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -29,7 +27,8 @@ public slots:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
     void save();
-    bool saveAs(const QString filename);
+    bool saveAs(const QString filename){return false;}
+
 };
 
-#endif // BYTEARRAYLISTMODEL_H
+#endif // BYTEARRAYDIFFMODEL_H

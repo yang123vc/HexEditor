@@ -28,9 +28,13 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     ByteArrayListModel.cpp \
-    ByteArrayItemDelegate.cpp
+    ByteArrayItemDelegate.cpp \
+    ByteArrayDiffModel.cpp \
+    AbstractByteArrayModel.cpp
 
 HEADERS += \
         mainwindow.h \
     ByteArrayListModel.h \
-    ByteArrayItemDelegate.h
+    ByteArrayItemDelegate.h \
+    ByteArrayDiffModel.h \
+    AbstractByteArrayModel.h

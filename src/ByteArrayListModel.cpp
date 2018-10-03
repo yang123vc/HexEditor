@@ -3,7 +3,7 @@
 #include <assert.h>
 
 ByteArrayListModel::ByteArrayListModel(QObject *parent) :
-    QAbstractListModel(parent)
+    AbstractByteArrayModel(parent)
 {
 }
 
@@ -51,7 +51,7 @@ bool ByteArrayListModel::saveAs(const QString filename)
 
         if(saveAsFile.open(QFile::WriteOnly)){
             for(qint64 row = 0; row < rowCount(); row++){
-                const QByteArray array = data(index(row)).toByteArray();
+                const QByteArray array = data(index(row, 0)).toByteArray();
                 writeRowToFile(saveAsFile, row, array);
             }
             writeCacheToFile(saveAsFile);
@@ -78,6 +78,12 @@ int ByteArrayListModel::rowCount(const QModelIndex &parent) const
                 (((size % 16) > 0) ? 1 : 0);
     }
     return ret;
+}
+
+int ByteArrayListModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return 1;
 }
 
 QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
