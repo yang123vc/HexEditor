@@ -11,6 +11,9 @@ ByteArrayDiffModel::ByteArrayDiffModel(ByteArrayListModel *child1, ByteArrayList
     child1(child1),
     child2(child2)
 {
+    child1->setParent(this);
+    child2->setParent(this);
+
     connect(child1, SIGNAL(cacheChanged()), SIGNAL(cacheChanged()));
     connect(child2, SIGNAL(cacheChanged()), SIGNAL(cacheChanged()));
 

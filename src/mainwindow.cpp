@@ -77,28 +77,29 @@ void MainWindow::read()
                                                     "Binary (*.bin);;"
                                                     "All (*.*)");
     if(!fileName.isEmpty()){
-        ByteArrayListModel *model = new ByteArrayListModel(this);
-        this->model = model;
+        ByteArrayListModel *tmpModel = new ByteArrayListModel(this);
 
-        if(model->open(fileName)){
+        if(tmpModel->open(fileName)){
 
             if(dataView->model()){
                 dataView->model()->deleteLater();
             }
 
-            dataView->setModel(model);
+            dataView->setModel(tmpModel);
+            model = tmpModel;
 
             setWindowTitle(titleBase());
             statusBar()->showMessage(QString("File %1 is opened").arg(
-                                         model->getFilename()), 10000);
+                                         tmpModel->getFilename()), 10000);
 
-            connect(model, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
-            connect(model, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
+            connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
+            connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
             connect(saveAction, SIGNAL(triggered(bool)),
-                    model, SLOT(save()));
+                    tmpModel, SLOT(save()));
         }else{
-            model->deleteLater();
-            model = nullptr;
+            QMessageBox::critical(0, tr("File is not opened"), tr("Can't to open the file"));
+            tmpModel->deleteLater();
+            tmpModel = nullptr;
         }
     }else{
         statusBar()->showMessage("File opening error", 10000);
@@ -121,8 +122,7 @@ void MainWindow::diff()
 
         ByteArrayListModel *model1 = new ByteArrayListModel(this);
         ByteArrayListModel *model2 = new ByteArrayListModel(this);
-        ByteArrayDiffModel *model = new ByteArrayDiffModel(model1, model2);
-        this->model = model;
+        ByteArrayDiffModel *tmpModel = new ByteArrayDiffModel(model1, model2);
 
         if(model1->open(fileName1) &&
                 model2->open(fileName2) &&
@@ -132,7 +132,8 @@ void MainWindow::diff()
                 dataView->model()->deleteLater();
             }
 
-            dataView->setModel(model);
+            dataView->setModel(tmpModel);
+            this->model = tmpModel;
 
             setWindowTitle(titleBase());
             statusBar()->showMessage(
@@ -140,13 +141,13 @@ void MainWindow::diff()
                             model1->getFilename()).arg(
                             model2->getFilename()), 10000);
 
-            connect(model, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
-            connect(model, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
+            connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
+            connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
             connect(saveAction, SIGNAL(triggered(bool)),
-                    model, SLOT(save()));
+                    tmpModel, SLOT(save()));
         }else{
-            model1->deleteLater();
-            model1 = nullptr;
+            tmpModel->deleteLater();
+            tmpModel = nullptr;
         }
     }else{
         statusBar()->showMessage("File opening error", 10000);
@@ -155,10 +156,12 @@ void MainWindow::diff()
 
 void MainWindow::saveAs()
 {
-    const QString filename = QFileDialog::getSaveFileName();
+    if(model != nullptr){
+        const QString filename = QFileDialog::getSaveFileName();
 
-    if(!filename.isEmpty()){
-        model->saveAs(filename);
+        if(!filename.isEmpty()){
+            model->saveAs(filename);
+        }
     }
 }
 
