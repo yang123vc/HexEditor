@@ -10,3 +10,7 @@ Hex view
 Hex diff
 
 ![](https://github.com/ilyayunkin/HexEditor/blob/master/img/screen2.jpg)
+
+Hex editing
+
+![](https://github.com/ilyayunkin/HexEditor/blob/master/img/screen3.jpg)
