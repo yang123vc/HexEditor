@@ -28,6 +28,10 @@ public:
     void updateEditorGeometry(QWidget *editor,
         const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
+    QSize sizeHint(const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const override;
+    QSize sizeHint(const QString &text, const QFont &font) const;
+    void getText(const QModelIndex &index, QString &text) const;
 };
 
 #endif // BYTEARRAYITEMDELEGATE_H

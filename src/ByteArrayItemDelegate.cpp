@@ -6,7 +6,6 @@
 #include <QLineEdit>
 #include <QRegExpValidator>
 #include <QPainter>
-#include <QDebug>
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -54,11 +53,8 @@ void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const QByteArray thisArray = index.data().toByteArray();
-
-    const QString thisStr = getHexRepresentation(thisArray, true) +
-            "    " + getAsciiRepresentation(thisArray);
-    opt.text = thisStr;
+    QString thisStr;
+    getText(index, thisStr);
 
     painter->fillRect(option.rect, QBrush(Qt::white));
     painter->setFont(option.font);
@@ -66,9 +62,8 @@ void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         int siblingCol = (index.column() == 1) ? 0 : 1;
         const QModelIndex siblingIndex = index.sibling(index.row(), siblingCol);
         if(siblingIndex.isValid()){
-            const QByteArray thatArray = siblingIndex.data().toByteArray();
-            const QString thatStr = getHexRepresentation(thatArray, true) +
-                    "    " + getAsciiRepresentation(thatArray);
+            QString thatStr;
+            getText(siblingIndex, thatStr);
 
             int i = 0;
             while((i < thisStr.length())){
@@ -109,7 +104,6 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &th
         QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
         painter->drawRect(redrawRect);
         painter->restore();
-        qDebug() << pos << i <<begin << end << redrawRect << rect ;
     }
     return i;
 }
@@ -163,4 +157,29 @@ void ByteArrayItemDelegate::updateEditorGeometry(QWidget *editor,
                                            const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
     editor->setGeometry(option.rect);
+}
+
+QSize ByteArrayItemDelegate::sizeHint(const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const
+{
+    QString text;
+    getText(index, text);
+
+    return sizeHint(text, option.font);
+}
+
+QSize ByteArrayItemDelegate::sizeHint(const QString &text, const QFont &font) const
+{
+    QFontMetrics fontMetrics(font);
+    QSize s(fontMetrics.width(text), fontMetrics.height());
+
+    return s;
+}
+
+void ByteArrayItemDelegate::getText(const QModelIndex &index, QString &text) const
+{
+    const QByteArray thisArray = index.data().toByteArray();
+
+    text = getHexRepresentation(thisArray, true) +
+            "    " + getAsciiRepresentation(thisArray);
 }

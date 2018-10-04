@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
         layout->addWidget(dataView);
         dataView->setItemDelegate(&delegate);
         dataView->horizontalHeader()->hide();
-        dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
         dataView->setFont(f);
     }
 
