@@ -59,7 +59,7 @@ void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     painter->fillRect(option.rect, QBrush(Qt::white));
     painter->setFont(option.font);
     {
-        int siblingCol = (index.column() == 1) ? 0 : 1;
+        const int siblingCol = (index.column() == 1) ? 0 : 1;
         const QModelIndex siblingIndex = index.sibling(index.row(), siblingCol);
         if(siblingIndex.isValid()){
             QString thatStr;
@@ -94,14 +94,14 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &th
     }
 
     if(diff){
-        QFontMetrics fontMetrics(painter->font());
-        int begin = rect.left() + fontMetrics.width(thisStr.left(pos));
-        int end = rect.left() + fontMetrics.width(thisStr.left(i));
+        const QFontMetrics fontMetrics(painter->font());
+        const int begin = rect.left() + fontMetrics.width(thisStr.left(pos));
+        const int end = rect.left() + fontMetrics.width(thisStr.left(i));
         painter->save();
         painter->setBrush(QBrush(Qt::yellow));
         painter->setPen(QPen(Qt::NoPen));
 
-        QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
+        const QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
         painter->drawRect(redrawRect);
         painter->restore();
     }
@@ -143,7 +143,7 @@ void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
     const QLineEdit *const lineEdit = static_cast<QLineEdit*>(editor);
 
     const QRegExp regexp("[0-f]{2}(\\s[0-f]{2})*$");
-    QString hexString = lineEdit->text();
+    const QString hexString = lineEdit->text();
     if(regexp.exactMatch(hexString)){
         const QByteArray array = QByteArray::fromHex(hexString.toLatin1());
 
@@ -170,8 +170,8 @@ QSize ByteArrayItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 
 QSize ByteArrayItemDelegate::sizeHint(const QString &text, const QFont &font) const
 {
-    QFontMetrics fontMetrics(font);
-    QSize s(fontMetrics.width(text), fontMetrics.height());
+    const QFontMetrics fontMetrics(font);
+    const QSize s(fontMetrics.width(text), fontMetrics.height());
 
     return s;
 }
