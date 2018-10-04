@@ -72,7 +72,7 @@ void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         }
     }
 
-    painter->drawText(option.rect, thisStr);
+    painter->drawText(option.rect, Qt::AlignVCenter, thisStr);
 }
 
 int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &thisStr,
