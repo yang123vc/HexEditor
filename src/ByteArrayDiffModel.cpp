@@ -62,18 +62,6 @@ QVariant ByteArrayDiffModel::data(const QModelIndex &index, int role) const
                 }
             }
                 break;
-            case Qt::BackgroundRole:
-            {
-                QVariant v1 = child1->data(child1->index(row, 0));
-                QVariant v2 = child2->data(child2->index(row, 0));
-
-                if(v1 != v2){
-                    QColor c("yellow");
-                    ret = QBrush(c);
-                }else{
-                }
-            }
-                break;
             default:
                 break;
             }

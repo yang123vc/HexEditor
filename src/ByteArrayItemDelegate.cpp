@@ -5,6 +5,8 @@
 #include <QApplication>
 #include <QLineEdit>
 #include <QRegExpValidator>
+#include <QPainter>
+#include <QDebug>
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -52,14 +54,64 @@ void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const QByteArray array = index.data().toByteArray();
+    const QByteArray thisArray = index.data().toByteArray();
 
-    const QString str = getHexRepresentation(array, true) +
-            "    " + getAsciiRepresentation(array);
-    opt.text = str;
+    const QString thisStr = getHexRepresentation(thisArray, true) +
+            "    " + getAsciiRepresentation(thisArray);
+    opt.text = thisStr;
 
-    QApplication::style()->drawControl(QStyle::CE_ItemViewItem,
-                                       &opt, painter);
+    painter->fillRect(option.rect, QBrush(Qt::white));
+    painter->setFont(option.font);
+    {
+        int siblingCol = (index.column() == 1) ? 0 : 1;
+        const QModelIndex siblingIndex = index.sibling(index.row(), siblingCol);
+        if(siblingIndex.isValid()){
+            const QByteArray thatArray = siblingIndex.data().toByteArray();
+            const QString thatStr = getHexRepresentation(thatArray, true) +
+                    "    " + getAsciiRepresentation(thatArray);
+
+            int i = 0;
+            while((i < thisStr.length())){
+                i = drawHighlighting(painter, thisStr, thatStr, i, option.rect);
+            }
+        }
+    }
+
+    painter->drawText(option.rect, thisStr);
+}
+
+int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &thisStr,
+                                            const QString &thatStr, const int pos,
+                                            const QRect &rect) const
+{
+    int i = pos;
+    bool diff = false;
+
+    while((i < thisStr.length())){
+        if((thatStr.length() <= i) ||
+                (thatStr[i] != thisStr[i])){
+            diff = true;
+            i++;
+        }else{
+            i++;
+            break;
+        }
+    }
+
+    if(diff){
+        QFontMetrics fontMetrics(painter->font());
+        int begin = rect.left() + fontMetrics.width(thisStr.left(pos));
+        int end = rect.left() + fontMetrics.width(thisStr.left(i));
+        painter->save();
+        painter->setBrush(QBrush(Qt::yellow));
+        painter->setPen(QPen(Qt::NoPen));
+
+        QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
+        painter->drawRect(redrawRect);
+        painter->restore();
+        qDebug() << pos << i <<begin << end << redrawRect << rect ;
+    }
+    return i;
 }
 
 QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
