@@ -52,7 +52,7 @@ bool ByteArrayListModel::save()
 
 bool ByteArrayListModel::saveAs(const QString filename)
 {
-    bool ret = true;
+    bool ret = false;
 
     if(!file.isNull() && file->isOpen()){
         QFile saveAsFile(filename);
@@ -61,6 +61,7 @@ bool ByteArrayListModel::saveAs(const QString filename)
                     saveAsFile.open(QFile::WriteOnly) :
                     saveAsFile.open(QFile::ReadWrite);
 
+        ret = opened;
         if(opened){
             if(fileChanging){
                 for(qint64 row = 0; row < rowCount(); row++){
@@ -78,11 +79,7 @@ bool ByteArrayListModel::saveAs(const QString filename)
                 file.swap(reopenFile);
                 reopenFile->close();
             }
-        }else{
-            ret = false;
         }
-    }else{
-        return false;
     }
 
     return ret;
