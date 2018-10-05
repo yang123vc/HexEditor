@@ -1,9 +1,11 @@
 #include "mainwindow.h"
 
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QStatusBar>
 #include <QMenuBar>
 #include <QHeaderView>
+#include <QLabel>
 
 #include <QFileDialog>
 #include <QFontDialog>
@@ -13,6 +15,7 @@
 #include <QApplication>
 
 #include <QCloseEvent>
+#include <QTextCodec>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -20,7 +23,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setCentralWidget(new QWidget);
     QVBoxLayout *layout = new QVBoxLayout(centralWidget());
+    {
+        QHBoxLayout *hLayout = new QHBoxLayout;
+        layout->addLayout(hLayout);
 
+        hLayout->addWidget(new QLabel(tr("Encoding")));
+        codecComboBox = new QComboBox;
+        hLayout->addWidget(codecComboBox);
+
+        foreach (int mib, QTextCodec::availableMibs()) {
+            const QTextCodec *codec = QTextCodec::codecForMib(mib);
+            codecComboBox->addItem(codec->name(), codec->mibEnum());
+        }
+        connect(codecComboBox, SIGNAL(currentIndexChanged(int)), SLOT(updateDelegateCodec()));
+    }
     {
         QFont f("Monospace");
         f.setStyleHint(QFont::Monospace);
@@ -63,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     setStatusBar(new QStatusBar);
     setMinimumSize(800, 400);
+    updateDelegateCodec();
 }
 
 MainWindow::~MainWindow()
@@ -198,6 +215,14 @@ void MainWindow::cacheChanged()
 void MainWindow::cacheSaved()
 {
     setWindowTitle(titleBase());
+}
+
+void MainWindow::updateDelegateCodec()
+{
+    const int mib = codecComboBox->itemData(codecComboBox->currentIndex()).toInt();
+    QTextCodec *codec = QTextCodec::codecForMib(mib);
+    delegate.setCodec(codec);
+    dataView->viewport()->update();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

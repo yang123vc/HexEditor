@@ -8,7 +8,8 @@
 #include <QPainter>
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
-    QStyledItemDelegate(parent)
+    QStyledItemDelegate(parent),
+    codec(nullptr)
 {
 }
 
@@ -30,16 +31,18 @@ QString ByteArrayItemDelegate::getHexRepresentation(const QByteArray &array, boo
 QString ByteArrayItemDelegate::getAsciiRepresentation(const QByteArray &array) const
 {
     QString str;
-    str.resize(array.size());
+    if(codec != nullptr){
+        str = codec->toUnicode(array);
+    }else{
+        str = array;
+    }
 
-    for(int i = 0; i < array.size(); i++){
-        const bool printAsIs = QChar::isLetterOrNumber(array[i]) ||
-                QChar::isPunct(array[i]);
+    for(int i = 0; i < str.length(); i++){
+        const bool printAsIs = str[i].isLetterOrNumber() ||
+                str[i].isPunct();
 
         if(!printAsIs){
             str[i] = '.';
-        }else{
-            str[i] = array[i];
         }
     }
 
@@ -183,3 +186,9 @@ void ByteArrayItemDelegate::getText(const QModelIndex &index, QString &text) con
     text = getHexRepresentation(thisArray, true) +
             "    " + getAsciiRepresentation(thisArray);
 }
+
+void ByteArrayItemDelegate::setCodec(QTextCodec * codec) const
+{
+    this->codec = codec;
+}
+

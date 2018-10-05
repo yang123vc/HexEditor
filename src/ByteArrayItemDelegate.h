@@ -2,9 +2,11 @@
 #define BYTEARRAYITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QTextCodec>
 
 class ByteArrayItemDelegate : public QStyledItemDelegate
 {
+    mutable QTextCodec * codec;
 private:
     QString getHexRepresentation(const QByteArray &array,
                                  bool justified = false) const;
@@ -32,6 +34,8 @@ public:
                    const QModelIndex &index) const override;
     QSize sizeHint(const QString &text, const QFont &font) const;
     void getText(const QModelIndex &index, QString &text) const;
+
+    void setCodec(QTextCodec * codec) const;
 };
 
 #endif // BYTEARRAYITEMDELEGATE_H

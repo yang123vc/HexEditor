@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTableView>
+#include <QComboBox>
 
 #include "ByteArrayListModel.h"
 #include "ByteArrayDiffModel.h"
@@ -16,6 +17,7 @@ class MainWindow : public QMainWindow
     QAction *saveAction;
     ByteArrayItemDelegate delegate;
     AbstractByteArrayModel *model;
+    QComboBox *codecComboBox;
 
     void closeEvent(QCloseEvent *event);
 
@@ -33,6 +35,7 @@ public slots:
     void selectFont();
     void cacheChanged();
     void cacheSaved();
+    void updateDelegateCodec();
 };
 
 #endif // MAINWINDOW_H
