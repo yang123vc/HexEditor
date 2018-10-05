@@ -164,6 +164,8 @@ void MainWindow::saveAs()
         if(!filename.isEmpty()){
             if(!model->saveAs(filename)){
                 QMessageBox::critical(0, tr("File writing error"), tr("Can't to write the file"));
+            }else{
+                setWindowTitle(titleBase());
             }
         }
     }

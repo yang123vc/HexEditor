@@ -9,7 +9,7 @@ ByteArrayListModel::ByteArrayListModel(QObject *parent) :
 
 QString ByteArrayListModel::getFilename() const
 {
-    return file.fileName();
+    return file->fileName();
 }
 
 bool ByteArrayListModel::writeCacheToFile(QFile &readWriteFile) const
@@ -39,7 +39,7 @@ bool ByteArrayListModel::save()
 {
     bool ret = false;
     if(!editingCache.empty()){
-        bool ok = saveAs(file.fileName());
+        bool ok = saveAs(file->fileName());
 
         if(ok){
             editingCache.clear();
@@ -52,27 +52,41 @@ bool ByteArrayListModel::save()
 
 bool ByteArrayListModel::saveAs(const QString filename)
 {
-
-    QFile saveAsFile(filename);
-    bool opened = false;
-
-    if(filename != file.fileName()){
-        opened = saveAsFile.open(QFile::WriteOnly);
-    }else{
-        opened = saveAsFile.open(QFile::ReadWrite);
-    }
-
     bool ret = true;
 
-    if(opened){
-        for(qint64 row = 0; row < rowCount(); row++){
-            const QByteArray array = data(index(row, 0)).toByteArray();
-            ret&= writeRowToFile(saveAsFile, row, array);
+    if(!file.isNull() && file->isOpen()){
+        QFile saveAsFile(filename);
+        bool opened = false;
+        const bool fileChanging = filename != file->fileName();
+
+        if(fileChanging){
+            opened = saveAsFile.open(QFile::WriteOnly);
+        }else{
+            opened = saveAsFile.open(QFile::ReadWrite);
         }
 
-        ret&= writeCacheToFile(saveAsFile);
+        if(opened){
+            if(fileChanging){
+                for(qint64 row = 0; row < rowCount(); row++){
+                    const QByteArray array = data(index(row, 0)).toByteArray();
+                    ret&= writeRowToFile(saveAsFile, row, array);
+                }
+            }
+
+            ret&= writeCacheToFile(saveAsFile);
+            saveAsFile.close();
+
+            if(fileChanging){
+                QSharedPointer<QFile> reopenFile(new QFile(filename));
+                ret&= reopenFile->open(QIODevice::ReadOnly);
+                file.swap(reopenFile);
+                reopenFile->close();
+            }
+        }else{
+            ret = false;
+        }
     }else{
-        ret = false;
+        return false;
     }
 
     return ret;
@@ -87,8 +101,8 @@ int ByteArrayListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     long ret = 0;
-    if(file.isOpen()){
-        long size = file.size();
+    if(!file.isNull() && file->isOpen()){
+        long size = file->size();
         ret = size / 16 +
                 (((size % 16) > 0) ? 1 : 0);
     }
@@ -105,7 +119,7 @@ QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
 {
     QVariant ret;
 
-    if(file.isOpen()){
+    if(!file.isNull() && file->isOpen()){
         int row = index.row();
 
         if(row < rowCount()){
@@ -118,8 +132,8 @@ QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
                 if(foundInCache){
                     ret = *it;
                 }else{
-                    file.seek(row * 16);
-                    ret = file.read(16);
+                    file->seek(row * 16);
+                    ret = file->read(16);
                 }
             }
                 break;
@@ -157,7 +171,7 @@ bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value
 {
     bool ret = false;
 
-    if(file.isOpen()){
+    if(!file.isNull() && file->isOpen()){
         int row = index.row();
 
         if(row < rowCount()){
@@ -189,9 +203,9 @@ bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value
 
 bool ByteArrayListModel::open(const QString filename)
 {
-    file.setFileName(filename);
+    file = QSharedPointer<QFile>(new QFile(filename));
 
-    return file.open(QFile::ReadOnly);
+    return file->open(QFile::ReadOnly);
 }
 
 Qt::ItemFlags ByteArrayListModel::flags(const QModelIndex &index) const

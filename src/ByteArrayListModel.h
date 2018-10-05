@@ -5,12 +5,13 @@
 #include <QByteArray>
 #include <QMap>
 #include <QFile>
+#include <QSharedPointer>
 
 class ByteArrayListModel : public AbstractByteArrayModel
 {
     Q_OBJECT
 
-    mutable QFile file;
+    mutable QSharedPointer<QFile> file;
     QMap<qint64, QByteArray> editingCache;
     bool writeCacheToFile(QFile &readWriteFile) const;
     bool writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const;
