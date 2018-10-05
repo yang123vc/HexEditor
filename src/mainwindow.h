@@ -14,7 +14,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     QTableView * dataView;
-    QAction *saveAction;
     ByteArrayItemDelegate delegate;
     AbstractByteArrayModel *model;
     QComboBox *codecComboBox;

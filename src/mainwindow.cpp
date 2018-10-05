@@ -52,28 +52,14 @@ MainWindow::MainWindow(QWidget *parent)
     {
         {
             QMenu * fileMenu = menuBar()->addMenu("File");
-            {
-                QAction *openAction = fileMenu->addAction("Open");
-                connect(openAction, SIGNAL(triggered(bool)), SLOT(read()));
-            }
-            {
-                QAction *openAction = fileMenu->addAction("Diff");
-                connect(openAction, SIGNAL(triggered(bool)), SLOT(diff()));
-            }
-            {
-                saveAction = fileMenu->addAction("Save");
-            }
-            {
-                QAction *saveAsAction = fileMenu->addAction("Save as...");
-                connect(saveAsAction, SIGNAL(triggered(bool)), SLOT(saveAs()));
-            }
+            fileMenu->addAction("Open", this, read,  QKeySequence(tr("Ctrl+O")));
+            fileMenu->addAction("Diff", this, diff, QKeySequence(tr("Ctrl+D")));
+            fileMenu->addAction("Save", this, save, QKeySequence(tr("Ctrl+S")));
+            fileMenu->addAction("Save as...", this, saveAs);
         }
         {
             QMenu * settingsMenu = menuBar()->addMenu("Settings");
-            {
-                QAction *fontsAction = settingsMenu->addAction("Fonts");
-                connect(fontsAction, SIGNAL(triggered(bool)), SLOT(selectFont()));
-            }
+            settingsMenu->addAction("Fonts", this, selectFont);
         }
     }
 
@@ -111,7 +97,6 @@ void MainWindow::read()
 
             connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
             connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
-            connect(saveAction, SIGNAL(triggered(bool)), SLOT(save()));
         }else{
             QMessageBox::critical(0, tr("File is not opened"), tr("Can't to open the file"));
             tmpModel->deleteLater();
@@ -159,7 +144,6 @@ void MainWindow::diff()
 
             connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
             connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
-            connect(saveAction, SIGNAL(triggered(bool)), SLOT(save()));
         }else{
             tmpModel->deleteLater();
             tmpModel = nullptr;
