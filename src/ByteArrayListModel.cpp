@@ -37,14 +37,15 @@ bool ByteArrayListModel::writeRowToFile(QFile &file, qint64 row, const QByteArra
 
 bool ByteArrayListModel::save()
 {
-    bool ret = false;
+    bool ret = true;
     if(!editingCache.empty()){
         const bool ok = saveAs(file->fileName());
 
         if(ok){
             editingCache.clear();
             emit cacheSaved();
-            ret = true;
+        }else{
+            ret = false;
         }
     }
     return ret;
