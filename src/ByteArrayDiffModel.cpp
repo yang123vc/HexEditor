@@ -127,8 +127,8 @@ Qt::ItemFlags ByteArrayDiffModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
-void ByteArrayDiffModel::save()
+bool ByteArrayDiffModel::save()
 {
-    child1->save();
-    child2->save();
+    return child1->save() &&
+            child2->save();
 }

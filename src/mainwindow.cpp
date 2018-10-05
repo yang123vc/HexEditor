@@ -94,8 +94,7 @@ void MainWindow::read()
 
             connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
             connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
-            connect(saveAction, SIGNAL(triggered(bool)),
-                    tmpModel, SLOT(save()));
+            connect(saveAction, SIGNAL(triggered(bool)), SLOT(save()));
         }else{
             QMessageBox::critical(0, tr("File is not opened"), tr("Can't to open the file"));
             tmpModel->deleteLater();
@@ -143,8 +142,7 @@ void MainWindow::diff()
 
             connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
             connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
-            connect(saveAction, SIGNAL(triggered(bool)),
-                    tmpModel, SLOT(save()));
+            connect(saveAction, SIGNAL(triggered(bool)), SLOT(save()));
         }else{
             tmpModel->deleteLater();
             tmpModel = nullptr;
@@ -157,10 +155,25 @@ void MainWindow::diff()
 void MainWindow::saveAs()
 {
     if(model != nullptr){
-        const QString filename = QFileDialog::getSaveFileName();
+        const QString filename = QFileDialog::getSaveFileName(0, "Save file", QString(),
+                                                              "Executable (*.exe);;"
+                                                              "DLL (*.dll);;"
+                                                              "Binary (*.bin);;"
+                                                              "All (*.*)");
 
         if(!filename.isEmpty()){
-            model->saveAs(filename);
+            if(!model->saveAs(filename)){
+                QMessageBox::critical(0, tr("File writing error"), tr("Can't to write the file"));
+            }
+        }
+    }
+}
+
+void MainWindow::save()
+{
+    if(model != nullptr){
+        if(!model->save()){
+            QMessageBox::critical(0, tr("File writing error"), tr("Can't to write the file"));
         }
     }
 }

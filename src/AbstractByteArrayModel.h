@@ -19,7 +19,7 @@ public slots:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) = 0;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const = 0;
 
-    virtual void save() = 0;
+    virtual bool save() = 0;
     virtual bool saveAs(const QString filename) = 0;
 
 signals:

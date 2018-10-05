@@ -29,6 +29,7 @@ public slots:
     void read();
     void diff();
     void saveAs();
+    void save();
     void selectFont();
     void cacheChanged();
     void cacheSaved();

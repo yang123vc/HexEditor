@@ -12,38 +12,46 @@ QString ByteArrayListModel::getFilename() const
     return file.fileName();
 }
 
-void ByteArrayListModel::writeCacheToFile(QFile &readWriteFile) const
+bool ByteArrayListModel::writeCacheToFile(QFile &readWriteFile) const
 {
+    bool ret = true;
+
     for(QMap<qint64, QByteArray>::const_iterator it = editingCache.begin(); it != editingCache.end(); ++it) {
         const QByteArray &array = *it;
         const qint64 row = it.key();
 
-        writeRowToFile(readWriteFile, row, array);
+        ret&= writeRowToFile(readWriteFile, row, array);
     }
+
+    return ret;
 }
 
-void ByteArrayListModel::writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const
+bool ByteArrayListModel::writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const
 {
     file.seek(row * 16);
     qint64 count = file.write(array);
     assert(count == array.size());
+
+    return (count == array.size());
 }
 
-void ByteArrayListModel::save()
+bool ByteArrayListModel::save()
 {
+    bool ret = false;
     if(!editingCache.empty()){
         bool ok = saveAs(file.fileName());
 
         if(ok){
             editingCache.clear();
             emit cacheSaved();
+            ret = true;
         }
     }
+    return ret;
 }
 
 bool ByteArrayListModel::saveAs(const QString filename)
 {
-    bool ret = false;
 
     QFile saveAsFile(filename);
     bool opened = false;
@@ -54,13 +62,17 @@ bool ByteArrayListModel::saveAs(const QString filename)
         opened = saveAsFile.open(QFile::ReadWrite);
     }
 
+    bool ret = true;
+
     if(opened){
         for(qint64 row = 0; row < rowCount(); row++){
             const QByteArray array = data(index(row, 0)).toByteArray();
-            writeRowToFile(saveAsFile, row, array);
+            ret&= writeRowToFile(saveAsFile, row, array);
         }
-        writeCacheToFile(saveAsFile);
-        ret = true;
+
+        ret&= writeCacheToFile(saveAsFile);
+    }else{
+        ret = false;
     }
 
     return ret;
