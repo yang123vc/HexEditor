@@ -29,7 +29,7 @@ bool ByteArrayListModel::writeCacheToFile(QFile &readWriteFile) const
 bool ByteArrayListModel::writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const
 {
     file.seek(row * 16);
-    qint64 count = file.write(array);
+    const qint64 count = file.write(array);
     assert(count == array.size());
 
     return (count == array.size());
@@ -39,7 +39,7 @@ bool ByteArrayListModel::save()
 {
     bool ret = false;
     if(!editingCache.empty()){
-        bool ok = saveAs(file->fileName());
+        const bool ok = saveAs(file->fileName());
 
         if(ok){
             editingCache.clear();
@@ -98,7 +98,7 @@ int ByteArrayListModel::rowCount(const QModelIndex &parent) const
     Q_UNUSED(parent);
     long ret = 0;
     if(!file.isNull() && file->isOpen()){
-        long size = file->size();
+        const long size = file->size();
         ret = size / 16 +
                 (((size % 16) > 0) ? 1 : 0);
     }
@@ -116,14 +116,14 @@ QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
     QVariant ret;
 
     if(!file.isNull() && file->isOpen()){
-        int row = index.row();
+        const int row = index.row();
 
         if(row < rowCount()){
             switch (role) {
             case Qt::DisplayRole:
             {
                 QMap<qint64, QByteArray>::const_iterator it = editingCache.find(row);
-                bool foundInCache = it != editingCache.end();
+                const bool foundInCache = it != editingCache.end();
 
                 if(foundInCache){
                     ret = *it;
@@ -149,8 +149,8 @@ QVariant ByteArrayListModel::headerData(int section, Qt::Orientation orientation
         switch (role) {
         case Qt::DisplayRole:
         {
-            qint64 begin = section * 16;
-            qint64 end = section + 16 - 1;
+            const qint64 begin = section * 16;
+            const qint64 end = section + 16 - 1;
 
             ret = QString::number(begin, 16).rightJustified(4, '0') + " : " +
                     QString::number(end, 16).rightJustified(4, '0');
@@ -168,7 +168,7 @@ bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value
     bool ret = false;
 
     if(!file.isNull() && file->isOpen()){
-        int row = index.row();
+        const int row = index.row();
 
         if(row < rowCount()){
             switch (role) {
