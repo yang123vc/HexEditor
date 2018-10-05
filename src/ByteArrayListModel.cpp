@@ -34,8 +34,10 @@ void ByteArrayListModel::save()
     if(!editingCache.empty()){
         bool ok = saveAs(file.fileName());
 
-        editingCache.clear();
-        emit cacheSaved();
+        if(ok){
+            editingCache.clear();
+            emit cacheSaved();
+        }
     }
 }
 
