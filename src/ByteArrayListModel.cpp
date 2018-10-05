@@ -56,14 +56,10 @@ bool ByteArrayListModel::saveAs(const QString filename)
 
     if(!file.isNull() && file->isOpen()){
         QFile saveAsFile(filename);
-        bool opened = false;
         const bool fileChanging = filename != file->fileName();
-
-        if(fileChanging){
-            opened = saveAsFile.open(QFile::WriteOnly);
-        }else{
-            opened = saveAsFile.open(QFile::ReadWrite);
-        }
+        const bool opened = (fileChanging) ?
+                    saveAsFile.open(QFile::WriteOnly) :
+                    saveAsFile.open(QFile::ReadWrite);
 
         if(opened){
             if(fileChanging){
