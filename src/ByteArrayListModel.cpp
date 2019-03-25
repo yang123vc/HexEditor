@@ -161,7 +161,7 @@ QVariant ByteArrayListModel::headerData(int section, Qt::Orientation orientation
                     QString::number(end, 16).rightJustified(4, '0');
         }else
         {
-            ret = QString("%1(md5=%2)").arg(getFilename()).arg(hash);
+            ret = getFilename();
         }
     }
         break;
@@ -227,5 +227,5 @@ Qt::ItemFlags ByteArrayListModel::flags(const QModelIndex &index) const
 {
     Q_UNUSED(index);
 
-    return Qt::ItemIsEditable | Qt::ItemIsEnabled;
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled ;
 }
