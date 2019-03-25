@@ -27,7 +27,12 @@ public slots:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
     bool save();
-    bool saveAs(const QString filename){return false;}
+    /**
+     * @brief saveAs
+     * @param filename
+     * @return false.
+     */
+    bool saveAs(const QString filename);
 
 };
 

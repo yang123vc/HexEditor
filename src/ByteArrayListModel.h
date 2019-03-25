@@ -11,15 +11,18 @@ class ByteArrayListModel : public AbstractByteArrayModel
 {
     Q_OBJECT
 
+    QString hash;
     mutable QSharedPointer<QFile> file;
     QMap<qint64, QByteArray> editingCache;
     bool writeCacheToFile(QFile &readWriteFile) const;
     bool writeRowToFile(QFile &file, qint64 row, const QByteArray &array) const;
+    QString calculateHash(const QString &filename) const;
 public:
     explicit ByteArrayListModel(QObject *parent = nullptr);
     bool open(const QString filename);
     QString getFilename() const;
     bool isEdited() const;
+    QString getHash() const;
 
 public slots:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;

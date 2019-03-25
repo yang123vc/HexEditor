@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#include <QCryptographicHash>
+
 ByteArrayListModel::ByteArrayListModel(QObject *parent) :
     AbstractByteArrayModel(parent)
 {
@@ -91,6 +93,11 @@ bool ByteArrayListModel::isEdited() const
     return !editingCache.empty();
 }
 
+QString ByteArrayListModel::getHash() const
+{
+    return hash;
+}
+
 int ByteArrayListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -143,20 +150,23 @@ QVariant ByteArrayListModel::data(const QModelIndex &index, int role) const
 QVariant ByteArrayListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     QVariant ret;
-    if(orientation == Qt::Vertical){
-        switch (role) {
-        case Qt::DisplayRole:
-        {
+    switch (role) {
+    case Qt::DisplayRole:
+    {
+        if(orientation == Qt::Vertical){
             const qint64 begin = section * 16;
             const qint64 end = section + 16 - 1;
 
             ret = QString::number(begin, 16).rightJustified(4, '0') + " : " +
                     QString::number(end, 16).rightJustified(4, '0');
+        }else
+        {
+            ret = QString("%1(md5=%2)").arg(getFilename()).arg(hash);
         }
-            break;
-        default:
-            break;
-        }
+    }
+        break;
+    default:
+        break;
     }
     return ret;
 }
@@ -197,9 +207,20 @@ bool ByteArrayListModel::setData(const QModelIndex &index, const QVariant &value
 
 bool ByteArrayListModel::open(const QString filename)
 {
+    hash = calculateHash(filename);
     file = QSharedPointer<QFile>(new QFile(filename));
 
     return file->open(QFile::ReadOnly);
+}
+
+QString ByteArrayListModel::calculateHash(const QString &filename) const
+{
+    QCryptographicHash md5gen(QCryptographicHash::Md5);
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    md5gen.addData(&file);
+    file.close();
+    return md5gen.result().toHex();
 }
 
 Qt::ItemFlags ByteArrayListModel::flags(const QModelIndex &index) const

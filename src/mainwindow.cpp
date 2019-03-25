@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
         dataView = new QTableView;
         layout->addWidget(dataView);
         dataView->setItemDelegate(&delegate);
-        dataView->horizontalHeader()->hide();
+//        dataView->horizontalHeader()->hide();
         dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
         dataView->setFont(f);
     }
@@ -144,6 +144,12 @@ void MainWindow::diff()
 
             connect(tmpModel, SIGNAL(cacheChanged()), SLOT(cacheChanged()));
             connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
+
+            if(model1->getHash() == model2->getHash()){
+                QMessageBox::information(0, "Files are equal", "Files are equal");
+            }else{
+                QMessageBox::critical(0, "Files are different", "Files are different");
+            }
         }else{
             tmpModel->deleteLater();
             tmpModel = nullptr;

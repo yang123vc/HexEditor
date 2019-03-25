@@ -48,24 +48,24 @@ QVariant ByteArrayDiffModel::data(const QModelIndex &index, int role) const
     QVariant ret;
 
     //if(file.isOpen()){
-        int row = index.row();
-        int col = index.column();
+    int row = index.row();
+    int col = index.column();
 
-        if(row < rowCount()){
-            switch (role) {
-            case Qt::DisplayRole:
-            {
-                if(col == 0){
-                    ret = child1->data(child1->index(row, 0));
-                }else{
-                    ret = child2->data(child2->index(row, 0));
-                }
-            }
-                break;
-            default:
-                break;
+    if(row < rowCount()){
+        switch (role) {
+        case Qt::DisplayRole:
+        {
+            if(col == 0){
+                ret = child1->data(child1->index(row, 0));
+            }else{
+                ret = child2->data(child2->index(row, 0));
             }
         }
+            break;
+        default:
+            break;
+        }
+    }
     //}
 
     return ret;
@@ -74,20 +74,27 @@ QVariant ByteArrayDiffModel::data(const QModelIndex &index, int role) const
 QVariant ByteArrayDiffModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     QVariant ret;
-    if(orientation == Qt::Vertical){
-        switch (role) {
-        case Qt::DisplayRole:
-        {
+
+    switch (role) {
+    case Qt::DisplayRole:
+    {
+        if(orientation == Qt::Vertical){
             qint64 begin = section * 16;
             qint64 end = section + 16 - 1;
 
             ret = QString::number(begin, 16).rightJustified(4, '0') + " : " +
                     QString::number(end, 16).rightJustified(4, '0');
+        }else{
+            if(section == 0){
+                ret = child1->headerData(0, orientation, role);
+            }else{
+                ret = child2->headerData(0, orientation, role);
+            }
         }
-            break;
-        default:
-            break;
-        }
+    }
+        break;
+    default:
+        break;
     }
     return ret;
 }
@@ -131,4 +138,9 @@ bool ByteArrayDiffModel::save()
 {
     return child1->save() &&
             child2->save();
+}
+bool ByteArrayDiffModel::saveAs(const QString filename)
+{
+    Q_UNUSED(filename);
+    return false;
 }
