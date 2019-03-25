@@ -6,6 +6,10 @@
 
 class ByteArrayItemDelegate : public QStyledItemDelegate
 {
+    static constexpr long hexBytesCount = 16 * 2;
+    static constexpr long spacesCount = 16 - 1;
+    static constexpr long justifiedLen = hexBytesCount + spacesCount;
+
     mutable QTextCodec * codec;
 private:
     QString getHexRepresentation(const QByteArray &array,

@@ -7,11 +7,8 @@
 #include <QRegExpValidator>
 #include <QPainter>
 
-const long hexBytesCount = 16 * 2;
-const long spacesCount = 16 - 1;
-const long justifiedLen = hexBytesCount + spacesCount;
-const QString representationSeparator = "    ";
-const long separatorLen = representationSeparator.length();
+static constexpr char representationSeparator[] = "    ";
+static constexpr long separatorLen = sizeof(representationSeparator);
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent),
