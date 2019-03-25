@@ -13,8 +13,10 @@ private:
     QString getAsciiRepresentation(const QByteArray &array) const;
 
     int drawHighlighting(QPainter *painter,
-                         const QString &thisStr, const QString &thatStr,
+                         const QByteArray &thisArray, const QByteArray &thatArray,
                          const int pos, const QRect &rect) const;
+    QString getText(const QModelIndex &index) const;
+    QString getText(const QByteArray &thisArray) const;
 
 public:
     explicit ByteArrayItemDelegate(QObject *parent = nullptr);
@@ -36,7 +38,6 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option,
                    const QModelIndex &index) const override;
     QSize sizeHint(const QString &text, const QFont &font) const;
-    void getText(const QModelIndex &index, QString &text) const;
 
     void setCodec(QTextCodec * codec) const;
 };

@@ -7,6 +7,12 @@
 #include <QRegExpValidator>
 #include <QPainter>
 
+const long hexBytesCount = 16 * 2;
+const long spacesCount = 16 - 1;
+const long justifiedLen = hexBytesCount + spacesCount;
+const QString representationSeparator = "    ";
+const long separatorLen = representationSeparator.length();
+
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent),
     codec(nullptr)
@@ -16,10 +22,6 @@ ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
 QString ByteArrayItemDelegate::getHexRepresentation(const QByteArray &array,
                                                     bool justified) const
 {
-    const long hexBytesCount = 16 * 2;
-    const long spacesCount = 16 - 1;
-    const long justifiedLen = hexBytesCount + spacesCount;
-
     QString str = array.toHex(' ');
 
     if(justified){
@@ -59,10 +61,6 @@ void ByteArrayItemDelegate::paint(QPainter *painter,
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    QString thisStr;
-    getText(index, thisStr);
-
-
     if(option.state & QStyle::State_Selected){
         painter->fillRect(option.rect, QBrush(Qt::cyan));
     }else{
@@ -74,29 +72,30 @@ void ByteArrayItemDelegate::paint(QPainter *painter,
         const int siblingCol = (index.column() == 1) ? 0 : 1;
         const QModelIndex siblingIndex = index.sibling(index.row(), siblingCol);
         if(siblingIndex.isValid()){
-            QString thatStr;
-            getText(siblingIndex, thatStr);
+            const QByteArray thisArray = index.data().toByteArray();
+            const QByteArray thatArray = siblingIndex.data().toByteArray();
 
             int i = 0;
-            while((i < thisStr.length())){
-                i = drawHighlighting(painter, thisStr, thatStr, i, option.rect);
+            while((i < thisArray.length())){
+                i = drawHighlighting(painter, thisArray, thatArray, i, option.rect);
             }
         }
     }
 
+    QString thisStr = getText(index);
     painter->drawText(option.rect, Qt::AlignVCenter, thisStr);
 }
 
-int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &thisStr,
-                                            const QString &thatStr, const int pos,
+int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QByteArray &thisArray,
+                                            const QByteArray &thatArray, const int pos,
                                             const QRect &rect) const
 {
     int i = pos;
     bool diff = false;
 
-    while((i < thisStr.length())){
-        if((thatStr.length() <= i) ||
-                (thatStr[i] != thisStr[i])){
+    while((i < thisArray.length())){
+        if((thatArray.length() <= i) ||
+                (thatArray[i] != thisArray[i])){
             diff = true;
             i++;
         }else{
@@ -107,14 +106,27 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &th
 
     if(diff){
         const QFontMetrics fontMetrics(painter->font());
-        const int begin = rect.left() + fontMetrics.width(thisStr.left(pos));
-        const int end = rect.left() + fontMetrics.width(thisStr.left(i));
         painter->save();
         painter->setBrush(QBrush(Qt::yellow));
         painter->setPen(QPen(Qt::NoPen));
+        {
+            const int begin = rect.left() +
+                    fontMetrics.width(getHexRepresentation(thisArray, true).left(i * 3));
+            const int end = rect.left() +
+                    fontMetrics.width(getHexRepresentation(thisArray, true).left(pos * 3));
 
-        const QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
-        painter->drawRect(redrawRect);
+            const QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
+            painter->drawRect(redrawRect);
+        }
+        {
+            const int begin = rect.left() +
+                    fontMetrics.width(getText(thisArray).left(i + justifiedLen + separatorLen));
+            const int end = rect.left() +
+                    fontMetrics.width(getText(thisArray).left(pos + justifiedLen + separatorLen));
+
+            const QRect redrawRect(QPoint(begin, rect.top()), QPoint(end, rect.bottom()));
+            painter->drawRect(redrawRect);
+        }
         painter->restore();
     }
     return i;
@@ -175,8 +187,7 @@ void ByteArrayItemDelegate::updateEditorGeometry(QWidget *editor,
 QSize ByteArrayItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
-    QString text;
-    getText(index, text);
+    QString text = getText(index);
 
     return sizeHint(text, option.font);
 }
@@ -189,12 +200,17 @@ QSize ByteArrayItemDelegate::sizeHint(const QString &text, const QFont &font) co
     return s;
 }
 
-void ByteArrayItemDelegate::getText(const QModelIndex &index, QString &text) const
+QString ByteArrayItemDelegate::getText(const QModelIndex &index) const
 {
     const QByteArray thisArray = index.data().toByteArray();
 
-    text = getHexRepresentation(thisArray, true) +
-            "    " + getAsciiRepresentation(thisArray);
+    return getText(thisArray);
+}
+
+QString ByteArrayItemDelegate::getText(const QByteArray &thisArray) const
+{
+    return getHexRepresentation(thisArray, true) +
+            representationSeparator + getAsciiRepresentation(thisArray);
 }
 
 void ByteArrayItemDelegate::setCodec(QTextCodec * codec) const
