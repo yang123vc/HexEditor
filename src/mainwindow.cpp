@@ -17,6 +17,8 @@
 #include <QCloseEvent>
 #include <QTextCodec>
 
+#include "TableCopier.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       model(nullptr)
@@ -46,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
 //        dataView->horizontalHeader()->hide();
         dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
         dataView->setFont(f);
+
+        new TableCopier(dataView);
     }
 
     setMenuBar(new QMenuBar);

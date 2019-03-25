@@ -30,11 +30,13 @@ SOURCES += \
     ByteArrayListModel.cpp \
     ByteArrayItemDelegate.cpp \
     ByteArrayDiffModel.cpp \
-    AbstractByteArrayModel.cpp
+    AbstractByteArrayModel.cpp \
+    TableCopier.cpp
 
 HEADERS += \
         mainwindow.h \
     ByteArrayListModel.h \
     ByteArrayItemDelegate.h \
     ByteArrayDiffModel.h \
-    AbstractByteArrayModel.h
+    AbstractByteArrayModel.h \
+    TableCopier.h

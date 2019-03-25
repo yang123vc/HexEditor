@@ -227,5 +227,5 @@ Qt::ItemFlags ByteArrayListModel::flags(const QModelIndex &index) const
 {
     Q_UNUSED(index);
 
-    return Qt::ItemIsEditable | Qt::ItemIsEnabled ;
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }

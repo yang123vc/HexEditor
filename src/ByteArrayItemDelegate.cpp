@@ -62,7 +62,13 @@ void ByteArrayItemDelegate::paint(QPainter *painter,
     QString thisStr;
     getText(index, thisStr);
 
-    painter->fillRect(option.rect, QBrush(Qt::white));
+
+    if(option.state & QStyle::State_Selected){
+        painter->fillRect(option.rect, QBrush(Qt::cyan));
+    }else{
+        painter->fillRect(option.rect, QBrush(Qt::white));
+    }
+
     painter->setFont(option.font);
     {
         const int siblingCol = (index.column() == 1) ? 0 : 1;
