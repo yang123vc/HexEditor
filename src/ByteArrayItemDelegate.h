@@ -12,7 +12,9 @@ private:
                                  bool justified = false) const;
     QString getAsciiRepresentation(const QByteArray &array) const;
 
-    int drawHighlighting(QPainter *painter, const QString &thisStr, const QString &thatStr, const int pos, const QRect &rect) const;
+    int drawHighlighting(QPainter *painter,
+                         const QString &thisStr, const QString &thatStr,
+                         const int pos, const QRect &rect) const;
 
 public:
     explicit ByteArrayItemDelegate(QObject *parent = nullptr);
@@ -28,7 +30,8 @@ public:
                       const QModelIndex &index) const override;
 
     void updateEditorGeometry(QWidget *editor,
-        const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+                              const QStyleOptionViewItem &option,
+                              const QModelIndex &index) const override;
 
     QSize sizeHint(const QStyleOptionViewItem &option,
                    const QModelIndex &index) const override;

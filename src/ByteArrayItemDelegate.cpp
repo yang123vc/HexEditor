@@ -13,7 +13,8 @@ ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
 {
 }
 
-QString ByteArrayItemDelegate::getHexRepresentation(const QByteArray &array, bool justified) const
+QString ByteArrayItemDelegate::getHexRepresentation(const QByteArray &array,
+                                                    bool justified) const
 {
     const long hexBytesCount = 16 * 2;
     const long spacesCount = 16 - 1;
@@ -49,7 +50,9 @@ QString ByteArrayItemDelegate::getAsciiRepresentation(const QByteArray &array) c
     return str;
 }
 
-void ByteArrayItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ByteArrayItemDelegate::paint(QPainter *painter,
+                                  const QStyleOptionViewItem &option,
+                                  const QModelIndex &index) const
 {
     Q_ASSERT(index.isValid());
 
@@ -112,8 +115,8 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QString &th
 }
 
 QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
-                                       const QStyleOptionViewItem &/* option */,
-                                       const QModelIndex &/* index */) const
+                                             const QStyleOptionViewItem &/* option */,
+                                             const QModelIndex &/* index */) const
 {
     QLineEdit *const editor = new QLineEdit(parent);
     editor->setFrame(false);
@@ -125,7 +128,7 @@ QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
 }
 
 void ByteArrayItemDelegate::setEditorData(QWidget *editor,
-                                    const QModelIndex &index) const
+                                          const QModelIndex &index) const
 {
     const QByteArray array = index.data().toByteArray();
 
@@ -134,7 +137,7 @@ void ByteArrayItemDelegate::setEditorData(QWidget *editor,
 }
 
 void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                                   const QModelIndex &index) const
+                                         const QModelIndex &index) const
 {
     const QVariant originalValue = model->data(index, Qt::DisplayRole);
 
@@ -157,13 +160,14 @@ void ByteArrayItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mo
 }
 
 void ByteArrayItemDelegate::updateEditorGeometry(QWidget *editor,
-                                           const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+                                                 const QStyleOptionViewItem &option,
+                                                 const QModelIndex &/* index */) const
 {
     editor->setGeometry(option.rect);
 }
 
 QSize ByteArrayItemDelegate::sizeHint(const QStyleOptionViewItem &option,
-                             const QModelIndex &index) const
+                                      const QModelIndex &index) const
 {
     QString text;
     getText(index, text);
