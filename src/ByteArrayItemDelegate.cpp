@@ -8,7 +8,7 @@
 #include <QPainter>
 
 static constexpr char representationSeparator[] = "    ";
-static constexpr long separatorLen = sizeof(representationSeparator);
+static constexpr long separatorLen = strlen(representationSeparator);
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent),
@@ -96,7 +96,6 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QByteArray 
             diff = true;
             i++;
         }else{
-            i++;
             break;
         }
     }
@@ -107,8 +106,9 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QByteArray 
         painter->setBrush(QBrush(Qt::yellow));
         painter->setPen(QPen(Qt::NoPen));
         {
+            assert(i > 0);
             const int begin = rect.left() +
-                    fontMetrics.width(getHexRepresentation(thisArray, true).left(i * 3));
+                    fontMetrics.width(getHexRepresentation(thisArray, true).left(i * 3 - 1));
             const int end = rect.left() +
                     fontMetrics.width(getHexRepresentation(thisArray, true).left(pos * 3));
 
@@ -126,7 +126,7 @@ int ByteArrayItemDelegate::drawHighlighting(QPainter *painter, const QByteArray 
         }
         painter->restore();
     }
-    return i;
+    return i + 1;
 }
 
 QWidget *ByteArrayItemDelegate::createEditor(QWidget *parent,
