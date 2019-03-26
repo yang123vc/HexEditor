@@ -7,8 +7,7 @@
 #include <QRegExpValidator>
 #include <QPainter>
 
-static constexpr char representationSeparator[] = "    ";
-static constexpr long separatorLen = strlen(representationSeparator);
+constexpr char ByteArrayItemDelegate::representationSeparator[];
 
 ByteArrayItemDelegate::ByteArrayItemDelegate(QObject *parent) :
     QStyledItemDelegate(parent),

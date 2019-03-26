@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include <QCryptographicHash>
+#include <QFileInfo>
 
 ByteArrayListModel::ByteArrayListModel(QObject *parent) :
     AbstractByteArrayModel(parent)
@@ -161,7 +162,26 @@ QVariant ByteArrayListModel::headerData(int section, Qt::Orientation orientation
                     QString::number(end, 16).rightJustified(4, '0');
         }else
         {
-            ret = getFilename();
+            QFileInfo info(*file.data());
+            QString filename = info.fileName();
+            QString path = info.absolutePath();
+            QString fullpath = info.filePath();
+
+            constexpr int maxLen = 16 * 4;
+            constexpr char dots[] = "...";
+
+            if(fullpath.length() <= maxLen){
+                ret = fullpath;
+            }else if(filename.length() <= maxLen){
+                QString header = QString(dots) + filename;
+                const int pathLen = header.length() >= maxLen ? 0 :
+                                                                maxLen - header.length();
+                header.prepend(path.left(pathLen));
+
+                ret = header;
+            }else{
+                ret = filename;
+            }
         }
     }
         break;

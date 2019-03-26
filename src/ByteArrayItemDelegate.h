@@ -6,9 +6,13 @@
 
 class ByteArrayItemDelegate : public QStyledItemDelegate
 {
-    static constexpr long hexBytesCount = 16 * 2;
-    static constexpr long spacesCount = 16 - 1;
+    static constexpr long bytesPerLine = 16;
+    static constexpr long hexBytesCount = bytesPerLine * 2;
+    static constexpr long spacesCount = bytesPerLine - 1;
     static constexpr long justifiedLen = hexBytesCount + spacesCount;
+    static constexpr char representationSeparator[] = "    ";
+    static constexpr long separatorLen = sizeof(representationSeparator) - 1;
+    static constexpr long maximumLen = justifiedLen + separatorLen + bytesPerLine;
 
     mutable QTextCodec * codec;
 private:
