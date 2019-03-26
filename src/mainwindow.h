@@ -22,6 +22,8 @@ class MainWindow : public QMainWindow
 
     QString titleBase() const;
 
+    QString getOpenFileName();
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

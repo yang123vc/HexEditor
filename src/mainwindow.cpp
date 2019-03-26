@@ -17,6 +17,11 @@
 #include <QCloseEvent>
 #include <QTextCodec>
 
+#include <QSettings>
+#include <QFileInfo>
+
+#include <QDebug>
+
 #include "TableCopier.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -78,11 +83,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::read()
 {
-    QString fileName = QFileDialog::getOpenFileName(0, "Open file", QString(),
-                                                    "Executable (*.exe);;"
-                                                    "DLL (*.dll);;"
-                                                    "Binary (*.bin);;"
-                                                    "All (*.*)");
+    QString fileName = getOpenFileName();
     if(!fileName.isEmpty()){
         ByteArrayListModel *tmpModel = new ByteArrayListModel(this);
 
@@ -113,16 +114,9 @@ void MainWindow::read()
 
 void MainWindow::diff()
 {
-    QString fileName1 = QFileDialog::getOpenFileName(this, "Open FIRST file", QString(),
-                                                    "Executable (*.exe);;"
-                                                    "DLL (*.dll);;"
-                                                    "Binary (*.bin);;"
-                                                    "All (*.*)");
-    QString fileName2 = QFileDialog::getOpenFileName(this, "Open SECOND file", QString(),
-                                                    "Executable (*.exe);;"
-                                                    "DLL (*.dll);;"
-                                                    "Binary (*.bin);;"
-                                                    "All (*.*)");
+    QString fileName1 = getOpenFileName();
+    QString fileName2 = fileName1.isEmpty() ? QString() : getOpenFileName();
+
     if((!fileName1.isEmpty()) && (!fileName2.isEmpty())){
 
         ByteArrayListModel *model1 = new ByteArrayListModel(this);
@@ -161,6 +155,24 @@ void MainWindow::diff()
     }else{
         statusBar()->showMessage("File opening error", 10000);
     }
+}
+
+QString MainWindow::getOpenFileName()
+{
+    QSettings settings("ilyayunkin", QApplication::applicationName());
+    QString valueName = "dirName";
+    QString dir = settings.value(valueName).toString();
+
+    QString fileName = QFileDialog::getOpenFileName(this, "Open file", dir,
+                                                    "Executable (*.exe);;"
+                                                    "DLL (*.dll);;"
+                                                    "Binary (*.bin);;"
+                                                    "All (*.*)");
+    if(!fileName.isEmpty()){
+        settings.setValue(valueName, QFileInfo(fileName).absolutePath());
+    }
+
+    return fileName;
 }
 
 void MainWindow::saveAs()
