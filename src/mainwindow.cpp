@@ -113,12 +113,12 @@ void MainWindow::read()
 
 void MainWindow::diff()
 {
-    QString fileName1 = QFileDialog::getOpenFileName(0, "Open FIRST file", QString(),
+    QString fileName1 = QFileDialog::getOpenFileName(this, "Open FIRST file", QString(),
                                                     "Executable (*.exe);;"
                                                     "DLL (*.dll);;"
                                                     "Binary (*.bin);;"
                                                     "All (*.*)");
-    QString fileName2 = QFileDialog::getOpenFileName(0, "Open SECOND file", QString(),
+    QString fileName2 = QFileDialog::getOpenFileName(this, "Open SECOND file", QString(),
                                                     "Executable (*.exe);;"
                                                     "DLL (*.dll);;"
                                                     "Binary (*.bin);;"
@@ -150,9 +150,9 @@ void MainWindow::diff()
             connect(tmpModel, SIGNAL(cacheSaved()), SLOT(cacheSaved()));
 
             if(model1->getHash() == model2->getHash()){
-                QMessageBox::information(0, "Files are equal", "Files are equal");
+                QMessageBox::information(this, "Files are equal", "Files are equal");
             }else{
-                QMessageBox::critical(0, "Files are different", "Files are different");
+                QMessageBox::critical(this, "Files are different", "Files are different");
             }
         }else{
             tmpModel->deleteLater();
