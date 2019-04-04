@@ -36,12 +36,12 @@ QString ByteArrayItemDelegate::getAsciiRepresentation(const QByteArray &array) c
         str = array;
     }
 
-    for(int i = 0; i < str.length(); i++){
-        const bool printAsIs = str[i].isLetterOrNumber() ||
-                str[i].isPunct();
+    for(QChar c : str){
+        const bool printAsIs = c.isLetterOrNumber() ||
+                c.isPunct();
 
         if(!printAsIs){
-            str[i] = '.';
+            c = '.';
         }
     }
 

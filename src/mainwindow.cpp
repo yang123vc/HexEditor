@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
         codecComboBox = new QComboBox;
         hLayout->addWidget(codecComboBox);
 
-        foreach (int mib, QTextCodec::availableMibs()) {
+        for (int mib : QTextCodec::availableMibs()) {
             const QTextCodec *codec = QTextCodec::codecForMib(mib);
             codecComboBox->addItem(codec->name(), codec->mibEnum());
         }

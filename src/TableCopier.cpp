@@ -46,7 +46,7 @@ void TableCopier::copyTableToClipboard() const
 
     if(!selectedIndexes.isEmpty()){
         int row = selectedIndexes.first().row();
-        foreach (QModelIndex index, selectedIndexes) {
+        for(QModelIndex index : selectedIndexes) {
             if(row != index.row()){// Если новая строка - отделим ее
                 clipBoardText.append("\n");
                 row = index.row();
